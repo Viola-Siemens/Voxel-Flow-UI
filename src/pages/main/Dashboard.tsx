@@ -1,23 +1,29 @@
-import {inject, observer} from "mobx-react";
-import {withRouter} from "react-router";
-import {RouteComponentProps} from "react-router-dom";
-import {IMainStore} from "@/stores";
-import * as React from "react";
+import schema2component from "../../utils/schema2component";
+import {API_HOST, UNAUTHORIZED_ADAPTOR} from "@/utils/adaptors";
 
-interface DashboardProps extends RouteComponentProps<any> {
-	store: IMainStore;
+const schema = {
+    type: "page",
+    title: "大盘",
+    api: {
+        method: "get",
+        url: `${API_HOST}/index`,
+        adaptor: UNAUTHORIZED_ADAPTOR,
+        responseData: {
+            assigned: "${data.data.assigned}",
+            totalUnassigned: "${data.data.totalUnassigned}"
+        }
+    },
+    body: [
+        {
+            "type": "tpl",
+            "tpl": "<%= data.assigned === 0 ? '您未被分配任何任务，请享受这一天！' : '您被分配了 ' + data.assigned + ' 个任务。' %>",
+            "inline": false
+        },
+        {
+            "type": "tpl",
+            "tpl": "现在平台中有 ${data.totalUnassigned} 个任务未被分配。"
+        }
+    ]
 }
 
-@inject("store")
-// @ts-ignore
-@withRouter
-@observer
-export default class DashboardRoute extends React.Component<DashboardProps, any> {
-	render() {
-		return (
-			<div>
-				<div>Dashboard</div>
-			</div>
-		);
-	}
-}
+export default schema2component(schema);
