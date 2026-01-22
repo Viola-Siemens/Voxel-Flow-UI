@@ -1,34 +1,27 @@
 import * as React from 'react';
 import {Button, Card, Input} from "antd";
 import {KeyOutlined, UserOutlined} from "@ant-design/icons";
-import {inject, observer} from "mobx-react";
-import {withRouter} from "react-router";
+import { observer } from "mobx-react";
 import {generateUsername} from "@/utils/defaultUsernames";
 import axios from "axios";
 import {API_HOST} from "@/utils/adaptors";
-import appStore from "@/stores/appStore";
 import {toast} from "amis";
-import {RouteComponentProps} from "react-router-dom";
+import {useNavigate} from "react-router";
+import {useState} from "react";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {IconButton} from "@mui/material";
 
-export interface RegisterProps extends RouteComponentProps<any> {}
+interface RegisterProps {}
 
-@inject("store")
-// @ts-ignore
-@withRouter
-@observer
-export default class Register extends React.Component<RegisterProps, any> {
-    state = {
-        inputUsername: generateUsername(),
-        inputPassword: "",
-        inputPassword2: "",
-    };
+const RegisterRoute: React.FC<RegisterProps> = observer((props) => {
+    const [inputUsername, setInputUsername] = useState(generateUsername());
+    const [inputPassword, setInputPassword] = useState("");
+    const [inputPassword2, setInputPassword2] = useState("");
+    const navigate = useNavigate();
 
-    handleFormSaved = (value: any) => {
-        const history = this.props.history;
-        console.log("inputUsername:", this.state.inputUsername);
-        if(this.state.inputPassword !== this.state.inputPassword2) {
+    const handleFormSaved = (value: any) => {
+        console.log("inputUsername:", inputUsername);
+        if(inputPassword !== inputPassword2) {
             toast["error"]("两次密码输入不相同！", "消息");
             return;
         }
@@ -37,132 +30,119 @@ export default class Register extends React.Component<RegisterProps, any> {
             method: "POST",
             url: `${API_HOST}/user/sign-up`,
             data: {
-                username: this.state.inputUsername,
-                password: this.state.inputPassword
+                username: inputUsername,
+                password: inputPassword
             }
         }).then((res) => {
-            console.log("login res", res);
+            console.log("sign-up res", res);
             if (res.data != null && res.data.status === 0) {
-                appStore.userStore.login(this.state.inputUsername);
-                toast.info("登陆成功", { timeout: "1400", position: "top-center" });
-                // 标头添加
-                axios.defaults.headers.common["p_u"] = this.state.inputUsername;
-                axios.defaults.headers.common["p_t"] = res.data.data.token;
                 // 跳转到dashboard页面
                 console.log("replace history to login, value:", value);
-                history.replace(`/login`);
+                navigate(`/login`);
             } else {
-                toast["error"]("登陆失败", "消息");
-                delete axios.defaults.headers.common["p_u"]
-                delete axios.defaults.headers.common["p_t"]
+                toast["error"]("注册失败", "消息");
             }
         });
     };
 
-    refreshUsername = () => {
-        this.setState({ inputUsername: generateUsername() });
+    const refreshUsername = () => {
+        setInputUsername(generateUsername());
     };
 
-    toLogin = () => {
-        this.props.history.replace(`/login`);
+    const toLogin = () => {
+        navigate(`/login`);
     };
 
-    handleChangeForUsername = (e: any) => {
-        this.setState({
-            inputUsername: e.target.value,
-        });
+    const handleChangeForUsername = (e: any) => {
+        setInputUsername(e.target.value);
     };
 
-    handleChangeForPassword = (e: any) => {
-        this.setState({
-            inputPassword: e.target.value,
-        });
+    const handleChangeForPassword = (e: any) => {
+        setInputPassword(e.target.value);
     };
 
-    handleChangeForPassword2 = (e: any) => {
-        this.setState({
-            inputPassword2: e.target.value,
-        });
+    const handleChangeForPassword2 = (e: any) => {
+        setInputPassword2(e.target.value);
     };
 
-    render() {
-        return (
-            <div className="login-page-container bg-gray-50">
-                <div className="container mt-5">
+    return (
+        <div className="login-page-container bg-gray-50">
+            <div className="container mt-5">
 					<span className="block m-b-xl text-center text-2x">
 						Voxel Flow
 					</span>
-                    <span className="block m-b-xl text-center">
+                <span className="block m-b-xl text-center">
 						让 Minecraft 项目管理更加简单
 					</span>
 
-                    <div className="flex flex-row justify-center ">
-                        <div className="m-24">
-                            <Card className="p-8" >
-                                <div className="mb-3">
-                                    <Input
-                                        prefix={<UserOutlined className="site-form-item-icon" />}
-                                        placeholder="用户名"
-                                        className="w-80"
-                                        size="large"
-                                        onChange={this.handleChangeForUsername}
-                                        value={this.state.inputUsername}
-                                    ></Input>
-                                    <IconButton onClick={this.refreshUsername}>
-                                        <RefreshIcon />
-                                    </IconButton>
-                                </div>
+                <div className="flex flex-row justify-center ">
+                    <div className="m-24">
+                        <Card className="p-8" >
+                            <div className="mb-3">
+                                <Input
+                                    prefix={<UserOutlined className="site-form-item-icon" />}
+                                    placeholder="用户名"
+                                    className="w-80"
+                                    size="large"
+                                    onChange={handleChangeForUsername}
+                                    value={inputUsername}
+                                ></Input>
+                                <IconButton onClick={refreshUsername}>
+                                    <RefreshIcon />
+                                </IconButton>
+                            </div>
 
-                                <div className="mb-3 bg-glass">
-                                    <Input
-                                        placeholder="密码"
-                                        size="large"
-                                        prefix={<KeyOutlined className="site-form-item-icon" />}
-                                        type="password"
-                                        className="w-80"
-                                        onChange={this.handleChangeForPassword}
-                                        defaultValue={this.state.inputPassword}
-                                    ></Input>
-                                </div>
+                            <div className="mb-3 bg-glass">
+                                <Input
+                                    placeholder="密码"
+                                    size="large"
+                                    prefix={<KeyOutlined className="site-form-item-icon" />}
+                                    type="password"
+                                    className="w-80"
+                                    onChange={handleChangeForPassword}
+                                    defaultValue={inputPassword}
+                                ></Input>
+                            </div>
 
-                                <div className="mb-3 bg-glass">
-                                    <Input
-                                        placeholder="重复密码"
-                                        size="large"
-                                        prefix={<KeyOutlined className="site-form-item-icon" />}
-                                        type="password"
-                                        className="w-80"
-                                        onChange={this.handleChangeForPassword2}
-                                        defaultValue={this.state.inputPassword2}
-                                    ></Input>
-                                </div>
+                            <div className="mb-3 bg-glass">
+                                <Input
+                                    placeholder="重复密码"
+                                    size="large"
+                                    prefix={<KeyOutlined className="site-form-item-icon" />}
+                                    type="password"
+                                    className="w-80"
+                                    onChange={handleChangeForPassword2}
+                                    defaultValue={inputPassword2}
+                                ></Input>
+                            </div>
 
-                                <div className="mb-3 flex flex-row justify-center">
-                                    <Button
-                                        type="primary"
-                                        size="large"
-                                        className="w-80"
-                                        onClick={this.handleFormSaved}
-                                    >
-                                        注册
-                                    </Button>
-                                </div>
+                            <div className="mb-3 flex flex-row justify-center">
+                                <Button
+                                    type="primary"
+                                    size="large"
+                                    className="w-80"
+                                    onClick={handleFormSaved}
+                                >
+                                    注册
+                                </Button>
+                            </div>
 
-                                <div className="mb-3 flex flex-row justify-center">
-                                    <Button
-                                        type="primary"
-                                        size="large"
-                                        className="w-80"
-                                        onClick={this.toLogin}
-                                    >
-                                        已有账号？去登录！
-                                    </Button>
-                                </div>
-                            </Card>
-                        </div>
+                            <div className="mb-3 flex flex-row justify-center">
+                                <Button
+                                    type="primary"
+                                    size="large"
+                                    className="w-80"
+                                    onClick={toLogin}
+                                >
+                                    已有账号？去登录！
+                                </Button>
+                            </div>
+                        </Card>
                     </div>
                 </div>
             </div>
-        );
-    }
-}
+        </div>
+    );
+});
+
+export default RegisterRoute;

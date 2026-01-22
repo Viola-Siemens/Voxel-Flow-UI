@@ -5,7 +5,6 @@ import {
 import { IMainStore } from '@/stores';
 import { getEnv } from 'mobx-state-tree';
 import { inject, observer } from 'mobx-react';
-import { withRouter } from 'react-router';
 import * as qs from 'qs';
 import { Action } from 'amis/lib/types';
 
@@ -15,8 +14,6 @@ interface RendererProps {
 }
 
 @inject("store")
-// @ts-ignore
-@withRouter
 @observer
 export default class AMisRenderer extends React.Component<RendererProps, any> {
 	env:any = null;
@@ -38,14 +35,14 @@ export default class AMisRenderer extends React.Component<RendererProps, any> {
 		const history = props.history;
 
 		const normalizeLink = (to:string) => {
-			if (/^\/api\//.test(to)) {
+			if (to?.startsWith("/api/")) {
 				return to;
 			}
 			to = to || '';
 			const location = history.location;
-			if (to && to[0] === '#') {
+			if (to?.startsWith('#')) {
 				to = location.pathname + location.search + to;
-			} else if (to && to[0] === '?') {
+			} else if (to?.startsWith('?')) {
 				to = location.pathname + to;
 			}
 			const idx = to.indexOf('?');
@@ -55,7 +52,7 @@ export default class AMisRenderer extends React.Component<RendererProps, any> {
 			let hash = ~idx2 ? to.substring(idx2) : '';
 			if (!pathname) {
 				pathname = location.pathname;
-			}else if (pathname[0] != '/' && !/^https?:\/\//.test(pathname)) {
+			}else if (!pathname.startsWith('/') && !/^https?:\/\//.test(pathname)) {
 				let relativeBase = location.pathname;
 				const paths = relativeBase.split('/');
 				paths.pop();

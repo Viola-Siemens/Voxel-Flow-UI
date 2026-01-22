@@ -2,33 +2,36 @@ import { action, computed, observable} from "mobx";
 
 class UserStore {
 	@observable
-	name = "";
+	username = "";
+
+    @observable
+    token = "";
 
 	constructor() {
-		this.name =  localStorage.getItem('authenticated') || '';
+		this.username = localStorage.getItem('p_u') || '';
+        this.token = localStorage.getItem('p_t') || '';
 	}
 
 	@computed
 	get isAuthenticated() {
-		return !!this.name;
+		return !!this.username;
 	}
 
 	@action
-	setName(name) {
-		this.name=name
-	}
-
-	@action
-	login(name) {
-		this.name=name;
-		localStorage.setItem('authenticated', name);
+	login(name: string, token: string) {
+		this.username = name;
+        this.token = token;
+		localStorage.setItem('p_u', name);
+        localStorage.setItem('p_t', token);
 	}
 
 
 	@action
 	logout() {
-		localStorage.setItem('authenticated', '');
-		this.name = '';
+		localStorage.setItem('p_u', '');
+        localStorage.setItem('p_t', '');
+		this.username = '';
+        this.token = '';
 		console.log("logout finished!");
 	}
 }

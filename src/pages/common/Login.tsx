@@ -1,49 +1,45 @@
 import * as React from "react";
 import axios from "axios";
 import { toast } from "amis";
-import { RouteComponentProps } from "react-router-dom";
-import { inject, observer } from "mobx-react";
-import { withRouter } from "react-router";
+import { observer } from "mobx-react";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { Input, Button, Card } from "antd";
 import appStore from "@/stores/appStore"
 import {API_HOST} from "@/utils/adaptors";
+import {useNavigate} from "react-router";
+import {useState} from "react";
+import {IMainStore} from "@/stores";
 
-interface LoginProps extends RouteComponentProps<any> {
+interface LoginProps {
+    store: IMainStore;
 }
 
-@inject("store")
-// @ts-ignore
-@withRouter
-@observer
-export default class LoginRoute extends React.Component<LoginProps, any> {
-	state = {
-		inputUsername: "",
-		inputPassword: "",
-	};
+const LoginRoute: React.FC<LoginProps> = observer((props) => {
+    const [inputUsername, setInputUsername] = useState("");
+    const [inputPassword, setInputPassword] = useState("");
+    const navigate = useNavigate();
 
-	handleFormSaved = (value: any) => {
-		const history = this.props.history;
-		console.log("inputUsername:", this.state.inputUsername);
+	const handleFormSaved = (value: any) => {
+		console.log("inputUsername:", inputUsername);
 		// 这里可以进行登陆密码验证
 		axios.request({
             method: "POST",
             url: `${API_HOST}/user/log-in`,
             data: {
-                username: this.state.inputUsername,
-                password: this.state.inputPassword
+                username: inputUsername,
+                password: inputPassword
             }
         }).then((res) => {
             console.log("login res", res);
             if (res.data != null && res.data.status === 0) {
-                appStore.userStore.login(this.state.inputUsername);
                 toast.info("登陆成功", { timeout: "1400", position: "top-center" });
                 // 标头添加
-                axios.defaults.headers.common["p_u"] = this.state.inputUsername;
+                axios.defaults.headers.common["p_u"] = inputUsername;
                 axios.defaults.headers.common["p_t"] = res.data.data.token;
+                appStore.userStore.login(inputUsername, res.data.data.token);
                 // 跳转到dashboard页面
                 console.log("replace history to dashboard, value:", value);
-                history.replace(`/dashboard`);
+                navigate(`/dashboard`);
             } else {
                 toast["error"]("登陆失败", "消息");
                 delete axios.defaults.headers.common["p_u"]
@@ -52,49 +48,44 @@ export default class LoginRoute extends React.Component<LoginProps, any> {
         });
 	};
 
-    toRegister = () => {
-        this.props.history.replace(`/register`);
+    const toRegister = () => {
+        navigate(`/register`);
     }
 
-	handleChangeForPassword = (e: any) => {
-		this.setState({
-			inputPassword: e.target.value,
-		});
+    const handleChangeForPassword = (e: any) => {
+        setInputPassword(e.target.value);
 	};
 
-	componentDidMount() {
-		console.log("appStore.userStore.name", appStore.userStore.name);
+    const componentDidMount = () => {
+		console.log("appStore.userStore.name", appStore.userStore.username);
 		console.log("store.user.isAuthenticated", appStore.userStore.isAuthenticated);
 	}
 
-	handleChangeForUsername = (e: any) => {
-		this.setState({
-			inputUsername: e.target.value,
-		});
+    const handleChangeForUsername = (e: any) => {
+        setInputUsername(e.target.value);
 	};
 
-	render() {
-		return (
-			<div className="login-page-container bg-gray-50">
-				<div className="container mt-5">
+    return (
+        <div className="login-page-container bg-gray-50">
+            <div className="container mt-5">
 					<span className="block m-b-xl text-center text-2x">
 						Voxel Flow
 					</span>
-					<span className="block m-b-xl text-center">
+                <span className="block m-b-xl text-center">
 						让 Minecraft 项目管理更加简单
 					</span>
 
-					<div className="flex flex-row justify-center ">
-						<div className="m-24">
-						<Card className="p-8" >
+                <div className="flex flex-row justify-center ">
+                    <div className="m-24">
+                        <Card className="p-8" >
                             <div className="mb-3">
                                 <Input
                                     prefix={<UserOutlined className="site-form-item-icon" />}
                                     placeholder="用户名"
                                     className="w-80"
                                     size="large"
-                                    onChange={this.handleChangeForUsername}
-                                    defaultValue={this.state.inputUsername}
+                                    onChange={handleChangeForUsername}
+                                    defaultValue={inputUsername}
                                 ></Input>
                             </div>
 
@@ -105,8 +96,8 @@ export default class LoginRoute extends React.Component<LoginProps, any> {
                                     prefix={<KeyOutlined className="site-form-item-icon" />}
                                     type="password"
                                     className="w-80"
-                                    onChange={this.handleChangeForPassword}
-                                    defaultValue={this.state.inputPassword}
+                                    onChange={handleChangeForPassword}
+                                    defaultValue={inputPassword}
                                 ></Input>
                             </div>
 
@@ -115,7 +106,7 @@ export default class LoginRoute extends React.Component<LoginProps, any> {
                                     type="primary"
                                     size="large"
                                     className="w-80"
-                                    onClick={this.handleFormSaved}
+                                    onClick={handleFormSaved}
                                 >
                                     登录
                                 </Button>
@@ -126,16 +117,17 @@ export default class LoginRoute extends React.Component<LoginProps, any> {
                                     type="primary"
                                     size="large"
                                     className="w-80"
-                                    onClick={this.toRegister}
+                                    onClick={toRegister}
                                 >
                                     没有账号？去注册！
                                 </Button>
                             </div>
-							</Card>
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	}
-}
+                        </Card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+});
+
+export default LoginRoute;

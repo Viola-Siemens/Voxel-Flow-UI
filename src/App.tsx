@@ -20,7 +20,7 @@ import 'amis-ui/lib/themes/cxd.css';
 import 'amis/lib/helper.css';
 import './scss/style.scss';
 
-export default function():JSX.Element {
+export default function(): JSX.Element {
 	const store = (window as any).store = MainStore.create({}, {
 		fetcher: ({
 			url,

@@ -1,4 +1,4 @@
-import schema2component from "../../utils/schema2component";
+import schema2component from "@/utils/schema2component";
 import {API_HOST, UNAUTHORIZED_ADAPTOR} from "@/utils/adaptors";
 
 const schema = {
@@ -21,7 +21,7 @@ const schema = {
         },
         {
             "type": "tpl",
-            "tpl": "现在平台中有 ${data.totalUnassigned} 个任务未被分配。"
+            "tpl": "现在平台中有 ${data.totalUnassigned} 个任务未被分配。<a href='/list/REQ'>去看看！</a>"
         }
     ]
 }
