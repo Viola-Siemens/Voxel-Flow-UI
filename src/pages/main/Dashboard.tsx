@@ -21,7 +21,7 @@ const schema = {
         },
         {
             "type": "tpl",
-            "tpl": "现在平台中有 ${data.totalUnassigned} 个任务未被分配。<a href='/list/REQ'>去看看！</a>"
+            "tpl": "现在平台中有 ${data.totalUnassigned} 个任务未被分配。<a href='/list/req'>去看看！</a>"
         }
     ]
 }

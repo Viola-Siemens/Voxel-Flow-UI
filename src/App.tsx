@@ -11,6 +11,7 @@ import copy from 'copy-to-clipboard';
 import RootRoute from './routes';
 import './utils/polyfill';
 import {request} from './utils/requestInterceptor';
+import Header from './components/Header';
 
 import "moment/dist/locale/zh-cn";
 // css
@@ -19,8 +20,9 @@ import 'amis/sdk/iconfont.css';
 import 'amis-ui/lib/themes/cxd.css';
 import 'amis/lib/helper.css';
 import './scss/style.scss';
+import './App.css'
 
-export default function(): JSX.Element {
+export default function App(): JSX.Element {
 	const store = (window as any).store = MainStore.create({}, {
 		fetcher: ({
 			url,
@@ -75,8 +77,13 @@ export default function(): JSX.Element {
 	});
 
 	return (
-		<Provider store={store}>
-			<RootRoute store={store} />
-		</Provider>
+        <>
+            <div>
+                <Header/>
+            </div>
+            <Provider store={store}>
+                <RootRoute store={store}/>
+            </Provider>
+        </>
 	);
 }
