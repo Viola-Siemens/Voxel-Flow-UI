@@ -7,14 +7,30 @@ import {toast} from "amis";
  */
 export function request(config: AxiosRequestConfig) {
 	let instance = axios.create();
+
+	// 添加响应拦截器处理 401
+	instance.interceptors.response.use(
+		(response) => response,
+		(error) => {
+			console.log("Interceptor caught error:", error);
+
+			// 处理 HTTP 401 未授权错误
+			if (error.response && error.response.status === 401) {
+				console.log("401 Unauthorized detected, redirecting to login");
+				window.location.href = '/login';
+				return Promise.reject({ isUnauthorized: true, redirected: true });
+			}
+			return Promise.reject(error);
+		}
+	);
+
 	return new Promise((resolve, reject) => {
 		let onSuccess = (res:any) => {
-			// console.log("onSuccess", res);
 			if (res.data == null) {
 				console.log("reject data")
 				reject(res);
 			} else if (res.data.status == 40001) {
-				// 未登陆
+				// 未登录
 				console.log("redirect url", res.data.redirectUrl)
 				window.location.href = res.data.redirectUrl;
 			} else if (res.data.status == 40002) {
