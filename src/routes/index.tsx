@@ -10,6 +10,7 @@ import Login from '@/pages/common/Login';
 import Register from '@/pages/common/Register';
 import MainRoute from '@/pages/main/Dashboard';
 import ReqList from '@/pages/main/req/List'
+import ReqDetail from '@/pages/main/req/Detail'
 import NotFound from '@/pages/common/404'
 
 import 'froala-editor/css/froala_style.min.css';
@@ -29,6 +30,7 @@ export default observer(function({store}:{
                     <Route path={`/register`} Component={Register} />
 					<Route path={'/dashboard'} Component={MainRoute} />
                     <Route path={'/list/req'} Component={ReqList} />
+                    <Route path={'/detail/req'} Component={ReqDetail} />
                     {/* 404: must be on the bottom */}
                     <Route path={'*'} Component={NotFound} />
 				</Routes>

@@ -31,17 +31,24 @@ const LoginRoute: React.FC<LoginProps> = observer((props) => {
             }
         }).then((res) => {
             console.log("login res", res);
-            if (res.data != null && res.data.status === 0) {
-                toast.info("登陆成功", { timeout: "1400", position: "top-center" });
+            if (res.data != null && res.data.code === 200) {
+                toast.info("登录成功", { timeout: "1400", position: "top-center" });
                 // 标头添加
-                axios.defaults.headers.common["p_u"] = inputUsername;
+                axios.defaults.headers.common["p_u"] = res.data.data.uid;
                 axios.defaults.headers.common["p_t"] = res.data.data.token;
-                appStore.userStore.login(inputUsername, res.data.data.token);
+                appStore.userStore.login(res.data.data.uid, res.data.data.token);
+				// 获取用户角色
+				axios.request({
+					method: "GET",
+					url: `${API_HOST}/user/roles`
+				}).then((res) => {
+
+				})
                 // 跳转到dashboard页面
                 console.log("replace history to dashboard, value:", value);
                 navigate(`/dashboard`);
             } else {
-                toast["error"]("登陆失败", "消息");
+                toast["error"]("登录失败", "消息");
                 delete axios.defaults.headers.common["p_u"]
                 delete axios.defaults.headers.common["p_t"]
             }
@@ -57,7 +64,8 @@ const LoginRoute: React.FC<LoginProps> = observer((props) => {
 	};
 
     const componentDidMount = () => {
-		console.log("appStore.userStore.name", appStore.userStore.username);
+		console.log("appStore.userStore.uid", appStore.userStore.uid);
+        console.log("appStore.userStore.token", appStore.userStore.token);
 		console.log("store.user.isAuthenticated", appStore.userStore.isAuthenticated);
 	}
 

@@ -1,6 +1,10 @@
 import schema2component from "@/utils/schema2component";
 import {API_HOST} from "@/utils/adaptors";
 
+/**
+ * 大盘组件喵~
+ * @author liudongyu
+ */
 const schema = {
     type: "page",
     title: "大盘",
@@ -9,9 +13,14 @@ const schema = {
         api: {
             method: "get",
             url: `${API_HOST}/index`,
-            responseData: {
-                assigned: "${data.data.assigned}",
-                totalUnassigned: "${data.data.totalUnassigned}"
+            adaptor: (payload: any) => {
+                return {
+                    ...payload,
+                    data: {
+                        assigned: payload.data.assigned,
+                        totalUnassigned: payload.data.totalUnassigned
+                    }
+                };
             }
         },
         body: [
@@ -27,7 +36,7 @@ const schema = {
             },
             {
                 "type": "tpl",
-                "tpl": "现在平台中有 ${data.totalUnassigned} 个任务未被分配。<a href='/list/req'>去看看！</a>"
+                "tpl": "现在平台中有 ${totalUnassigned} 个任务未被分配。<a href='/list/req'>去看看！</a>"
             }
         ]
     }

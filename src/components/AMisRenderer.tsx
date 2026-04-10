@@ -132,11 +132,22 @@ export default class AMisRenderer extends React.Component<RendererProps, any> {
 			schema,
 			store,
 			onAction,
+			history,
 			...rest
 		} = this.props;
+
+		// 解析 URL query 参数并传递给 AMIS 喵~
+		const query = history?.location?.search
+			? qs.parse(history.location.search.substring(1))
+			: {};
+
 		return renderSchema(schema, {
 			onAction: onAction || this.handleAction,
 			theme: store?.theme,
+			data: {
+				query,
+				...rest.data
+			},
 			...rest
 		}, this.env);
 	}

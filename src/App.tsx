@@ -12,6 +12,7 @@ import RootRoute from './routes';
 import './utils/polyfill';
 import {request} from './utils/requestInterceptor';
 import Header from './components/Header';
+import appStore from "@/stores/appStore"
 
 import "moment/dist/locale/zh-cn";
 // css
@@ -56,6 +57,10 @@ export default function App(): JSX.Element {
 				// config.headers = config.headers || {};
 				config.headers['Content-Type'] = 'application/json';
 			}
+            if(appStore.userStore.uid != null && appStore.userStore.token != null) {
+                config.headers['p_u'] = appStore.userStore.uid
+                config.headers['p_t'] = appStore.userStore.token
+            }
 
 			data && (config.data = data);
 			config.url = url;
