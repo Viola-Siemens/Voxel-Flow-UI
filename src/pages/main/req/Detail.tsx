@@ -1,9 +1,13 @@
-import schema2component from "@/utils/schema2component";
-import {API_HOST} from "@/utils/adaptors";
+import React, { useEffect, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import AMisRenderer from "@/components/AMisRenderer";
+import PermissionStore from "@/stores/PermissionStore";
+import { API_HOST } from "@/utils/adaptors";
+
+const permissionStore = new PermissionStore();
 
 /**
- * 需求详情页组件喵~
- * @author liudongyu
+ * 需求详情页的 amis schema 喵~
  */
 const schema = {
 	type: "page",
@@ -20,26 +24,97 @@ const schema = {
 		body: [
 			{
 				type: "panel",
-				title: "基本信息",
 				body: {
 					type: "form",
 					mode: "horizontal",
 					wrapWithPanel: false,
 					body: [
 						{
-							type: "static",
-							name: "code",
-							label: "需求编号"
+							type: "panel",
+							title: "基本信息",
+							body: [
+								{
+									type: "static",
+									name: "code",
+									label: "需求编号"
+								},
+								{
+									type: "static",
+									name: "title",
+									label: "需求标题"
+								},
+								{
+									type: "group",
+									body: [
+										{
+											type: "service",
+											api: {
+												method: "get",
+												url: `${API_HOST}/user/get?uid=\${createdBy}`,
+												responseData: {
+													createdByName: "${username}"
+												}
+											},
+											body: {
+												type: "static",
+												name: "createdByName",
+												label: "创建人"
+											}
+										},
+										{
+											type: "static-datetime",
+											name: "createdAt",
+											label: "创建时间",
+											format: "YYYY-MM-DD HH:mm:ss"
+										}
+									]
+								},
+								{
+									type: "group",
+									body: [
+										{
+											type: "service",
+											api: {
+												method: "get",
+												url: `${API_HOST}/user/get?uid=\${updatedBy}`,
+												responseData: {
+													updatedByName: "${username}"
+												}
+											},
+											body: {
+												type: "static",
+												name: "updatedByName",
+												label: "更新人"
+											}
+										},
+										{
+											type: "static-datetime",
+											name: "updatedAt",
+											label: "更新时间",
+											format: "YYYY-MM-DD HH:mm:ss"
+										}
+									]
+								}
+							]
 						},
 						{
-							type: "static",
-							name: "title",
-							label: "需求标题"
-						},
-						{
-							type: "static",
-							name: "description",
-							label: "需求描述"
+							type: "panel",
+							title: "需求描述",
+							body: [
+								{
+									type: "container",
+									style: {
+										marginTop: "20px",
+										marginBottom: "20px",
+										marginLeft: "10px",
+										marginRight: "10px"
+									},
+									body: {
+										type: "tpl",
+										name: "description"
+									}
+								}
+							]
 						},
 						{
 							type: "static-mapping",
@@ -86,18 +161,6 @@ const schema = {
 								"RECONSTRUCTION": "<span class = 'label label-cyan'>技术改造</span>",
 								"OTHER": "<span class='label label-dark'>其它</span>"
 							}
-						},
-						{
-							type: "static-datetime",
-							name: "createdAt",
-							label: "创建时间",
-							format: "YYYY-MM-DD HH:mm:ss"
-						},
-						{
-							type: "static-datetime",
-							name: "updatedAt",
-							label: "更新时间",
-							format: "YYYY-MM-DD HH:mm:ss"
 						}
 					]
 				}
@@ -120,22 +183,54 @@ const schema = {
 						type: "button",
 						label: "批准",
 						level: "success",
-						actionType: "ajax",
-						confirmText: "确认批准该需求吗？",
-						api: {
-							method: "post",
-							url: `${API_HOST}/requirement/approve`,
-							data: {
-								code: "${code}"
-							},
-							requestAdaptor: (api: any) => {
-								return {
-									...api,
-									headers: {
-										"Content-Type": "application/json"
+						// 仅在状态为"业务方评审中"且用户有需求创建权限时显示喵~
+						visibleOn: "canEdit(status)",
+						actionType: "dialog",
+						dialog: {
+							title: "批准需求",
+							body: {
+								type: "form",
+								api: {
+									method: "post",
+									url: `${API_HOST}/requirement/approve`,
+									requestAdaptor: (api: any) => {
+										return {
+											...api,
+											headers: {
+												"Content-Type": "application/json"
+											}
+										};
 									}
-								};
-							}
+								},
+								body: [
+									{
+										type: "hidden",
+										name: "code",
+										value: "${code}"
+									},
+									{
+										type: "textarea",
+										name: "description",
+										label: "批准理由",
+										placeholder: "请输入批准理由（选填）",
+										required: false,
+										minRows: 3,
+										maxRows: 10
+									}
+								]
+							},
+							actions: [
+								{
+									type: "button",
+									label: "取消",
+									actionType: "cancel"
+								},
+								{
+									type: "submit",
+									label: "确认批准",
+									level: "success"
+								}
+							]
 						},
 						reload: "window",
 						className: "m-l-sm"
@@ -144,6 +239,8 @@ const schema = {
 						type: "button",
 						label: "拒绝",
 						level: "danger",
+						// 仅在状态为"业务方评审中"且用户有需求创建权限时显示喵~
+						visibleOn: "canEdit(status)",
 						actionType: "dialog",
 						dialog: {
 							title: "拒绝需求",
@@ -172,6 +269,7 @@ const schema = {
 										name: "description",
 										label: "拒绝理由",
 										placeholder: "请输入拒绝理由",
+										required: true,
 										minRows: 3,
 										maxRows: 10
 									}
@@ -199,4 +297,35 @@ const schema = {
 	}
 };
 
-export default schema2component(schema);
+/**
+ * 需求详情页组件喵~
+ * 将 PermissionStore 中的权限值注入 amis 数据上下文，供 visibleOn 表达式使用喵~
+ *
+ * @author liudongyu
+ */
+export default function Detail(props: any) {
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	useEffect(() => {
+		document.title = "需求详情 - Voxel Flow";
+	}, []);
+
+	const history = useMemo(() => ({
+		location,
+		push: (path: string) => navigate(path),
+		replace: (path: string) => navigate(path, { replace: true }),
+		goBack: () => navigate(-1)
+	}), [navigate, location]);
+
+	return (
+		<AMisRenderer
+			schema={schema}
+			history={history}
+			data={{
+				canEdit: permissionStore.canEditRequirement
+			}}
+			{...props}
+		/>
+	);
+}

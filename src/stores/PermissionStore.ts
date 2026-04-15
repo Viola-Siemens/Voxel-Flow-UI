@@ -217,5 +217,33 @@ class PermissionStore {
 		// 更新到 localStorage 喵~
 		this.updatePermission();
 	}
+
+	/**
+	 * 判断需求是否可编辑
+	 * @param status
+	 */
+	canEditRequirement(status: string) {
+		switch(status) {
+			case 'REVIEWING':
+				return this.requirementCreate;
+			case 'COUNTERSIGNING':
+				return this.requirementCountersign;
+			case 'REQUIREMENT_ANALYSIS':
+				return this.requirementAnalyze;
+			case 'REQUIREMENT_REVIEWING':
+				return this.requirementReview;
+			case 'DESIGNING':
+				return this.requirementDesign;
+			case 'SCHEDULING':
+				return this.requirementSchedule;
+			case 'DEVELOPING':
+				return this.requirementDevelop;
+			case 'TESTING':
+				return this.requirementTest;
+			case 'CHECKING':
+				return this.requirementCheck;
+		}
+		return false;
+	}
 }
 export default PermissionStore;

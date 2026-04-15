@@ -142,13 +142,13 @@ export default class AMisRenderer extends React.Component<RendererProps, any> {
 			: {};
 
 		return renderSchema(schema, {
+			...rest,
 			onAction: onAction || this.handleAction,
 			theme: store?.theme,
 			data: {
 				query,
 				...rest.data
-			},
-			...rest
+			}
 		}, this.env);
 	}
 }

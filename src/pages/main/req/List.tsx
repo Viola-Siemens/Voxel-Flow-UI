@@ -183,7 +183,8 @@ const schema = {
 					"0": "<span class='label label-danger'>P0</span>",
 					"1": "<span class='label label-warning'>P1</span>",
 					"2": "<span class='label label-info'>P2</span>",
-					"3": "<span class='label label-default'>P3</span>"
+					"3": "<span class='label label-pale-blue'>P3</span>",
+					"4": "<span class='label label-default'>P4</span>"
 				},
 				sortable: true,
 				width: 80
