@@ -45,6 +45,52 @@ const schema = {
 									label: "需求标题"
 								},
 								{
+									type: "static-mapping",
+									name: "status",
+									label: "状态",
+									map: {
+										"REVIEWING": "<span class='label label-info'>业务方评审中</span>",
+										"COUNTERSIGNING": "<span class='label label-info'>多方会签中</span>",
+										"REQUIREMENT_ANALYSIS": "<span class='label label-warning'>产品分析中</span>",
+										"REQUIREMENT_REVIEWING": "<span class='label label-warning'>需求评审中</span>",
+										"DESIGNING": "<span class='label label-primary'>技术设计中</span>",
+										"SCHEDULING": "<span class='label label-primary'>排期中</span>",
+										"DEVELOPING": "<span class='label label-primary'>开发中</span>",
+										"TESTING": "<span class='label label-success'>测试中</span>",
+										"CHECKING": "<span class='label label-success'>验收中</span>",
+										"RELEASED": "<span class='label label-success'>已发布</span>",
+										"REJECTED": "<span class='label label-danger'>已拒绝</span>",
+										"CANCELED": "<span class='label label-default'>已取消</span>"
+									}
+								},
+								{
+									type: "static-mapping",
+									name: "priority",
+									label: "优先级",
+									map: {
+										"0": "<span class='label label-danger'>P0</span>",
+										"1": "<span class='label label-warning'>P1</span>",
+										"2": "<span class='label label-info'>P2</span>",
+										"3": "<span class='label label-pale-blue'>P3</span>",
+										"4": "<span class='label label-default'>P4</span>"
+									}
+								},
+								{
+									type: "static-mapping",
+									name: "requirementType",
+									label: "需求类型",
+									map: {
+										"BUILDING": "<span class='label label-brown'>建筑</span>",
+										"MOD": "<span class='label label-orange'>模组</span>",
+										"DATAPACK": "<span class='label label-success'>数据包</span>",
+										"MODPACK": "<span class='label label-primary'>整合包</span>",
+										"SERVER": "<span class='label label-teal'>服务器</span>",
+										"EFFICIENCY": "<span class='label label-magenta'>工程效率</span>",
+										"RECONSTRUCTION": "<span class = 'label label-cyan'>技术改造</span>",
+										"OTHER": "<span class='label label-dark'>其它</span>"
+									}
+								},
+								{
 									type: "group",
 									body: [
 										{
@@ -128,52 +174,6 @@ const schema = {
 									}
 								}
 							]
-						},
-						{
-							type: "static-mapping",
-							name: "status",
-							label: "状态",
-							map: {
-								"REVIEWING": "<span class='label label-info'>业务方评审中</span>",
-								"COUNTERSIGNING": "<span class='label label-info'>多方会签中</span>",
-								"REQUIREMENT_ANALYSIS": "<span class='label label-warning'>产品分析中</span>",
-								"REQUIREMENT_REVIEWING": "<span class='label label-warning'>需求评审中</span>",
-								"DESIGNING": "<span class='label label-primary'>技术设计中</span>",
-								"SCHEDULING": "<span class='label label-primary'>排期中</span>",
-								"DEVELOPING": "<span class='label label-primary'>开发中</span>",
-								"TESTING": "<span class='label label-success'>测试中</span>",
-								"CHECKING": "<span class='label label-success'>验收中</span>",
-								"RELEASED": "<span class='label label-success'>已发布</span>",
-								"REJECTED": "<span class='label label-danger'>已拒绝</span>",
-								"CANCELED": "<span class='label label-default'>已取消</span>"
-							}
-						},
-						{
-							type: "static-mapping",
-							name: "priority",
-							label: "优先级",
-							map: {
-								"0": "<span class='label label-danger'>P0</span>",
-								"1": "<span class='label label-warning'>P1</span>",
-								"2": "<span class='label label-info'>P2</span>",
-								"3": "<span class='label label-pale-blue'>P3</span>",
-								"4": "<span class='label label-default'>P4</span>"
-							}
-						},
-						{
-							type: "static-mapping",
-							name: "requirementType",
-							label: "需求类型",
-							map: {
-								"BUILDING": "<span class='label label-brown'>建筑</span>",
-								"MOD": "<span class='label label-orange'>模组</span>",
-								"DATAPACK": "<span class='label label-success'>数据包</span>",
-								"MODPACK": "<span class='label label-primary'>整合包</span>",
-								"SERVER": "<span class='label label-teal'>服务器</span>",
-								"EFFICIENCY": "<span class='label label-magenta'>工程效率</span>",
-								"RECONSTRUCTION": "<span class = 'label label-cyan'>技术改造</span>",
-								"OTHER": "<span class='label label-dark'>其它</span>"
-							}
 						}
 					]
 				}
