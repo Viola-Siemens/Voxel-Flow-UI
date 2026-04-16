@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AMisRenderer from "@/components/AMisRenderer";
 import PermissionStore from "@/stores/PermissionStore";
 import { API_HOST } from "@/utils/adaptors";
+import '@/components/UserLink';
 
 const permissionStore = new PermissionStore();
 
@@ -56,9 +57,12 @@ const schema = {
 												}
 											},
 											body: {
-												type: "static",
-												name: "createdByName",
-												label: "创建人"
+												type: "user-link",
+												label: "创建人",
+												uidField: "createdByUid",
+												usernameField: "createdByName",
+												emailField: "createdByEmail",
+												statusField: "createdByStatus"
 											}
 										},
 										{
@@ -82,9 +86,12 @@ const schema = {
 												}
 											},
 											body: {
-												type: "static",
-												name: "updatedByName",
-												label: "更新人"
+												type: "user-link",
+												label: "更新人",
+												uidField: "updatedByUid",
+												usernameField: "updatedByName",
+												emailField: "updatedByEmail",
+												statusField: "updatedByStatus"
 											}
 										},
 										{
