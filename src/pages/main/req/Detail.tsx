@@ -53,7 +53,10 @@ const schema = {
 												method: "get",
 												url: `${API_HOST}/user/get?uid=\${createdBy}`,
 												responseData: {
-													createdByName: "${username}"
+													createdByUid: "${uid}",
+													createdByName: "${username}",
+													createdByEmail: "${email}",
+													createdByStatus: "${userStatus}"
 												}
 											},
 											body: {
@@ -82,7 +85,10 @@ const schema = {
 												method: "get",
 												url: `${API_HOST}/user/get?uid=\${updatedBy}`,
 												responseData: {
-													updatedByName: "${username}"
+													updatedByUid: "${uid}",
+													updatedByName: "${username}",
+													updatedByEmail: "${email}",
+													updatedByStatus: "${userStatus}"
 												}
 											},
 											body: {
