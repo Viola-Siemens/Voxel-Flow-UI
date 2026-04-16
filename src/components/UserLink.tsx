@@ -3,7 +3,7 @@ import { FormItem } from 'amis-core';
 import { Popover, Avatar, Tag, Divider } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
-/** amis env 的���小接口定义喵~ */
+/** amis env 的最小接口定义喵~ */
 interface AmisEnv {
 	jumpTo: (url: string, action?: any) => void;
 }
