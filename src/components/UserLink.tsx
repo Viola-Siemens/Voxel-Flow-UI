@@ -3,6 +3,11 @@ import { FormItem } from 'amis-core';
 import { Popover, Avatar, Tag, Divider } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
+/** amis env 的���小接口定义喵~ */
+interface AmisEnv {
+	jumpTo: (url: string, action?: any) => void;
+}
+
 /** 用户状态枚举到中文标签与颜色的映射喵~ */
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
 	ACTIVE: { label: '常规用户', color: 'success' },
@@ -60,7 +65,7 @@ interface UserLinkProps {
 	/** amis 当前数据上下文喵~ */
 	data?: Record<string, any>;
 	/** amis env，用于 SPA 路由跳转喵~ */
-	env?: any;
+	env?: AmisEnv;
 }
 
 /**
@@ -80,21 +85,27 @@ interface UserLinkProps {
  *
  * @author liudongyu
  */
+// amis-core FormItem 装饰器工厂暂不提供完整类型签名，强转 any 以规避 TS 报错喵~
 @(FormItem as any)({ type: 'user-link' })
 class UserLinkRenderer extends React.Component<UserLinkProps> {
+	/** 从 amis 数据上下文中读取指定字段的字符串值喵~ */
+	private getField(fieldKey: string | undefined): string {
+		return String(fieldKey ? this.props.data?.[fieldKey] ?? '' : '');
+	}
+
 	handleClick = (e: React.MouseEvent) => {
 		e.preventDefault();
-		const { uidField, data, env } = this.props;
-		const uid = uidField ? data?.[uidField] ?? '' : '';
-		env?.jumpTo(`/user?uid=${uid}`);
+		const { uidField, env } = this.props;
+		const uid = this.getField(uidField);
+		env?.jumpTo(`/user?uid=${encodeURIComponent(uid)}`);
 	};
 
 	render() {
-		const { uidField, usernameField, emailField, statusField, data } = this.props;
-		const uid = String(uidField ? data?.[uidField] ?? '' : '');
-		const username = String(usernameField ? data?.[usernameField] ?? '' : '');
-		const email = String(emailField ? data?.[emailField] ?? '' : '');
-		const userStatus = String(statusField ? data?.[statusField] ?? '' : '');
+		const { uidField, usernameField, emailField, statusField } = this.props;
+		const uid = this.getField(uidField);
+		const username = this.getField(usernameField);
+		const email = this.getField(emailField);
+		const userStatus = this.getField(statusField);
 
 		return (
 			<Popover
@@ -109,7 +120,7 @@ class UserLinkRenderer extends React.Component<UserLinkProps> {
 				trigger="hover"
 				placement="bottomLeft"
 			>
-				<a href={`/user?uid=${uid}`} onClick={this.handleClick}>
+				<a href={`/user?uid=${encodeURIComponent(uid)}`} onClick={this.handleClick}>
 					{username}
 				</a>
 			</Popover>
