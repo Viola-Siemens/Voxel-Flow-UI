@@ -32,6 +32,7 @@ export default class AMisRenderer extends React.Component<RendererProps, any> {
 		const copy = getEnv(store).copy;
 		const apiHost = getEnv(store).apiHost;
 		const getModalContainer = getEnv(store).getModalContainer;
+		const isCancel = getEnv(store).isCancel;
 		const history = props.history;
 
 		const normalizeLink = (to:string) => {
@@ -123,7 +124,8 @@ export default class AMisRenderer extends React.Component<RendererProps, any> {
 			confirm,
 			copy,
 			apiHost,
-			getModalContainer
+			getModalContainer,
+			isCancel
 		};
 	}
 
