@@ -42,7 +42,7 @@ const LoginRoute: React.FC<LoginProps> = observer((props) => {
 					method: "GET",
 					url: `${API_HOST}/user/roles`
 				}).then((res) => {
-
+					appStore.permissionStore.setFromRoles(res.data.data.roles);
 				})
                 // 跳转到dashboard页面
                 console.log("replace history to dashboard, value:", value);

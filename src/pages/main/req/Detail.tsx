@@ -336,7 +336,7 @@ export default function Detail(props: any) {
 			schema={schema}
 			history={history}
 			data={{
-				canEdit: permissionStore.canEditRequirement
+				canEdit: (status: string) => permissionStore.canEditRequirement(status)
 			}}
 			{...props}
 		/>
